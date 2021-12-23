@@ -1,0 +1,75 @@
+.gogteat__editor {
+  --editor-base-color: #242424;
+  --cursor-color: #00c4ff;
+}
+
+.gogteat__editor,
+.CodeMirror {
+  height: 100%;
+  width: 100%;
+  & span::selection {
+    background: var(--selection-color) !important;
+  }
+}
+
+.CodeMirror {
+  &-cursors {
+    /* animation: blink 0.8s infinite alternate; */
+  }
+  &-cursor {
+    border-left: 2px solid var(--cursor-color);
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.cm-s-gogteat .cm-m-markdown {
+  color: var(--editor-base-color);
+
+  &.cm-header {
+    font-weight: bold;
+  }
+  &.cm-header-1 {
+    font-size: 2rem;
+  }
+  &.cm-header-2 {
+    font-size: 1.7rem;
+  }
+
+  &.cm-header-2 {
+    font-size: 1.2rem;
+  }
+
+  &.cm-quote {
+    color: #888;
+    background-color: rgba(128, 128, 128, 0.12);
+    padding: 2px;
+  }
+
+  &.cm-quote,
+  &.cm-string {
+    color: #888;
+  }
+
+  &.cm-tag,
+  &.cm-link {
+    color: #444;
+  }
+
+  &.cm-comment {
+    color: #a50;
+  }
+
+  &.cm-m-xml,
+  &.cm-bracket {
+    color: #170;
+    font-family: inherit;
+  }
+}
