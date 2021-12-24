@@ -1,28 +1,19 @@
 <script lang="ts">
   import { fs, dialog } from "@tauri-apps/api";
   import { DialogFilter } from "@tauri-apps/api/dialog";
-  import FileItem from "../components/FileItem.svelte";
+  import FileListItem from "../components/FileListItem.svelte";
+  import ProjectGroup from "../components/ProjectGroup.svelte";
+  import type { FileItem } from "../models/project";
   import { appStore } from "../store/app";
   import { editorStore } from "../store/editor";
   import { projectsStore } from "../store/projects";
-
-  const openFile = async (file: { name: string; path: string }) => {
-    const content = await fs.readTextFile(file.path);
-
-    editorStore.setFile(file.name, content);
-    $appStore.editorInstance.focus();
-  };
 </script>
 
 <div class="wrapper">
   <ul>
-    {#each $projectsStore.files as file}
+    {#each $projectsStore.projects as project}
       <li>
-        <FileItem
-          active={file.name === $editorStore.fileName}
-          name={file.name}
-          on:select={() => openFile(file)}
-        />
+        <ProjectGroup {project} />
       </li>
     {/each}
   </ul>
@@ -39,6 +30,7 @@
     & li {
       margin: 0;
       padding: 0;
+      list-style: none;
       & + li {
         border-top: 1px solid var(--border-color);
       }

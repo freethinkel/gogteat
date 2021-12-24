@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 
 const DEFAULT = {
   editorInstance: null,
+  previewMode: false,
 };
 
 const store = writable(DEFAULT);

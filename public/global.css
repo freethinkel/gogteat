@@ -1,11 +1,42 @@
 :root {
   --border-color: rgba(50, 50, 50, 0.12);
   --base-text-color: rgba(50, 50, 50, 1);
-  --selection-color: rgba(0, 196, 255, 0.32);
+  --base-text-color80: rgba(50, 50, 50, 0.8);
+  --base-text-color60: rgba(50, 50, 50, 0.6);
+  --base-text-color12: rgba(50, 50, 50, 0.12);
+  --accent-color: rgba(17, 155, 184, 1);
+  --accent-color50: rgba(17, 155, 184, 0.5);
+  --accent-color30: rgba(17, 155, 184, 0.3);
+  --accent-color12: rgba(17, 155, 184, 0.12);
+  --selection-color: var(--accent-color30);
+  --background-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: transparent;
+    --border-color: rgba(170, 170, 170, 0.06);
+    --base-text-color: rgba(255, 255, 255, 1);
+    --base-text-color80: rgba(255, 255, 255, 0.8);
+    --base-text-color60: rgba(255, 255, 255, 0.6);
+    --base-text-color12: rgba(255, 255, 255, 0.12);
+    --accent-color: rgba(0, 196, 255, 1);
+    --accent-color50: rgba(0, 196, 255, 0.5);
+    --accent-color30: rgba(0, 196, 255, 0.3);
+    --accent-color12: rgba(0, 196, 255, 0.12);
+    --selection-color: var(--accent-color30);
+  }
 }
 
 *::selection {
   background: var(--selection-color) !important;
+  background-color: var(--selection-color) !important;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
 html,
@@ -17,7 +48,8 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: transparent;
+  background: var(--background-color);
+  color: var(--base-font-color);
 }
 
 body {

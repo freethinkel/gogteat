@@ -1,41 +1,100 @@
 <script lang="ts">
-  import "codemirror/lib/codemirror.css";
-  import "codemirror/mode/gfm/gfm";
-  import "../styles/theme/light.postcss";
-  import CodeMirror from "codemirror";
-  import { editorStore } from "../store/editor";
-  import { onMount } from "svelte";
-  import { appStore } from "../store/app";
+  import { EditorState } from "@codemirror/state";
+  import { EditorView, keymap, highlightActiveLine } from "@codemirror/view";
+  import { defaultKeymap } from "@codemirror/commands";
+  import { history, historyKeymap } from "@codemirror/history";
+  import { indentOnInput } from "@codemirror/language";
+  import { bracketMatching } from "@codemirror/matchbrackets";
+  import { lineNumbers, highlightActiveLineGutter } from "@codemirror/gutter";
+  import {
+    defaultHighlightStyle,
+    HighlightStyle,
+    tags,
+  } from "@codemirror/highlight";
+  import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
+  import { languages } from "@codemirror/language-data";
+  import { oneDark } from "@codemirror/theme-one-dark";
 
-  let editorEl;
-  let editorInstance;
+  import { editorStore } from "../store/editor";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { appStore } from "../store/app";
+  import "../styles/theme/index.postcss";
+
+  export let doc: string;
+  export let theme = EditorView.theme({
+    "&": {
+      backgroundColor: "transparent !important",
+      height: "100%",
+    },
+  });
+
+  const syntaxHighlighting = HighlightStyle.define([
+    {
+      tag: tags.heading1,
+      fontSize: "1.6rem",
+      fontWeight: "bold",
+    },
+    {
+      tag: tags.heading2,
+      fontSize: "1.4rem",
+      fontWeight: "bold",
+    },
+    {
+      tag: tags.heading3,
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+    },
+  ]);
+
+  const dispatch = createEventDispatcher();
+
+  let editorEl: HTMLDivElement | undefined;
 
   $: {
-    if (editorInstance) {
-      if ($editorStore.content !== editorInstance.getValue()) {
-        editorInstance.setValue($editorStore.content);
+    if ($appStore.editorInstance && doc) {
+      if (doc !== $appStore.editorInstance.state.doc.toString()) {
+        $appStore.editorInstance.dispatch({
+          changes: { from: 0, insert: doc },
+        });
       }
     }
   }
 
   onMount(() => {
-    editorInstance = CodeMirror(editorEl, {
-      value: $editorStore.content,
-      theme: "default gogteat",
-      tabSize: 2,
-      indentWithTabs: true,
-      lineWrapping: true,
-      autocorrect: true,
-      addModeClass: true,
-      // cursorBlinkRate: 0,
-      mode: "gfm",
+    const startState = EditorState.create({
+      doc: doc,
+      extensions: [
+        keymap.of([...defaultKeymap, ...historyKeymap]),
+        lineNumbers(),
+        highlightActiveLineGutter(),
+        highlightActiveLine(),
+        markdown({
+          base: markdownLanguage,
+          codeLanguages: languages,
+          addKeymap: true,
+        }),
+        oneDark,
+        theme,
+        syntaxHighlighting,
+        history(),
+        indentOnInput(),
+        bracketMatching(),
+        defaultHighlightStyle.fallback,
+        EditorView.lineWrapping,
+        EditorView.updateListener.of((update) => {
+          if (update.changes) {
+            dispatch("change", update.state);
+          }
+        }),
+      ],
     });
 
-    appStore.setEditorInstance(editorInstance);
-
-    editorInstance.on("change", (data) => {
-      editorStore.updateContent(data.getValue());
+    const view = new EditorView({
+      state: startState,
+      parent: editorEl,
     });
+
+    appStore.setEditorInstance(view);
   });
 </script>
 

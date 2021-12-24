@@ -43,10 +43,13 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "cocoa",
+ "log",
+ "objc",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
+ "tauri-plugin-vibrancy",
 ]
 
 [[package]]
@@ -1427,6 +1430,29 @@ name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
+name = "libappindicator"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "84928b9cf11786337deb7befb0605295149c2bd5dcdcf31697d7d2444a48b7ee"
+dependencies = [
+ "glib",
+ "gtk",
+ "gtk-sys",
+ "libappindicator-sys",
+ "log",
+]
+
+[[package]]
+name = "libappindicator-sys"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "237b254c74da51cf41ad9cc2aadd9dc9c08e41779937162257f05a214a98d09b"
+dependencies = [
+ "gtk-sys",
+ "pkg-config",
+]
 
 [[package]]
 name = "libc"
@@ -2831,6 +2857,7 @@ dependencies = [
  "gtk",
  "instant",
  "lazy_static",
+ "libappindicator",
  "libc",
  "log",
  "ndk",
@@ -2946,6 +2973,19 @@ dependencies = [
  "quote",
  "syn",
  "tauri-codegen",
+]
+
+[[package]]
+name = "tauri-plugin-vibrancy"
+version = "0.1.0"
+source = "git+https://github.com/amrbashir/tauri-plugin-vibrancy?branch=master#4138ae2a98a961e24bf46f3f141399e7a590e046"
+dependencies = [
+ "cocoa",
+ "log",
+ "objc",
+ "tao",
+ "tauri",
+ "windows 0.28.0",
 ]
 
 [[package]]

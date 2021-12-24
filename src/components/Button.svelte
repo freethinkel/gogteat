@@ -1,10 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
+  export let active: boolean = false;
+
   const dispatch = createEventDispatcher();
 </script>
 
-<button class="btn" on:click={() => dispatch("click")}>
+<button class:active class="btn" on:click={() => dispatch("click")}>
   <slot />
 </button>
 
@@ -17,8 +19,12 @@
     font-size: 1rem;
     padding: 3px;
     border-radius: 6px;
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.08);
+    display: flex;
+    color: var(--base-text-color60);
+    &:hover,
+    &.active {
+      background-color: var(--accent-color12);
+      color: var(--accent-color);
     }
     &:disabled {
       opacity: 0.6;

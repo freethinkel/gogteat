@@ -25,7 +25,7 @@ const config = {
     }),
   ],
   banner: {
-    js: ' (() => new EventSource("http://localhost:8082").onmessage = () => location.reload())();',
+    js: ' (() => new EventSource("http://localhost:8090").onmessage = () => location.reload())();',
   },
   ...(isProd
     ? {}
@@ -67,5 +67,5 @@ if (!isProd) {
         Connection: "keep-alive",
       })
     );
-  }).listen(8082);
+  }).listen(8090);
 }

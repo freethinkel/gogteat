@@ -27,6 +27,10 @@
 
 <style lang="postcss">
   .wrapper {
+    --active-item-color: rgba(0, 0, 0, 0.06);
+    @media (prefers-color-scheme: dark) {
+      --active-item-color: rgba(255, 255, 255, 0.06);
+    }
     border: none;
     background: none;
     width: 100%;
@@ -35,12 +39,13 @@
     display: flex;
     padding: 4px 6px;
     cursor: pointer;
-    --active-item-color: rgba(0, 0, 0, 0.06);
     text-align: left;
     gap: 4px;
     align-items: center;
     height: 42px;
     font-size: 1rem;
+    color: var(--base-text-color);
+    border-bottom: 1px solid var(--border-color);
     &.active {
       background-color: var(--active-item-color);
     }
@@ -54,13 +59,14 @@
   .name {
     font-size: 0.9rem;
     font-weight: bold;
+    color: var(--base-text-color);
   }
   .path {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--base-text-color60);
     font-size: 0.8rem;
   }
 </style>

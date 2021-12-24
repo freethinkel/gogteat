@@ -1,5 +1,5 @@
 .gogteat__editor {
-  --editor-base-color: #242424;
+  --editor-base-color: var(--base-text-color);
   --cursor-color: var(--accent-color);
 }
 
@@ -10,11 +10,13 @@
 }
 
 .CodeMirror {
+  background: var(--background-color);
+  color: var(--editor-base-color) !important;
   &-selected {
     background: var(--selection-color) !important;
   }
   &-cursors {
-    /* animation: blink 0.8s infinite alternate; */
+    animation: blink 0.8s infinite alternate;
   }
   &-cursor {
     border-left: 2px solid var(--cursor-color);

@@ -7,6 +7,7 @@
 
   import Button from "../components/Button.svelte";
   import Icon from "../components/Icon.svelte";
+  import { appStore } from "../store/app";
   import { editorStore } from "../store/editor";
   import { projectsStore } from "../store/projects";
 
@@ -16,32 +17,22 @@
     isMacos = (await platform()) === "darwin";
   });
 
-  const openDirPicker = async () => {
-    const _dir = await dialog.open({
-      directory: true,
-    });
-    if (_dir) {
-      const dir = _dir.toString();
-      const _files = await fs.readDir(dir.toString());
-
-      const files = _files.filter(
-        (entry) => entry.name.split(".").pop() === "md"
-      );
-
-      projectsStore.setProjects(dir, files as { name: string; path: string }[]);
-    }
+  const togglePreview = () => {
+    $appStore.previewMode = !$appStore.previewMode;
   };
+
+  const openFilePicker = () => {};
 </script>
 
 <div class="wrapper" data-tauri-drag-region={isMacos} class:macos={isMacos}>
   <div class="left_side">
-    <Button on:click={openDirPicker}>
-      <Icon name="folder" />
+    <Button on:click={openFilePicker}>
+      <Icon name="file" />
     </Button>
   </div>
   <div class="right_side">
-    <Button>
-      <Icon name="artboard" />
+    <Button active={$appStore.previewMode} on:click={togglePreview}>
+      <Icon name="presentation" />
     </Button>
     <Button>
       <Icon name="artboard" />

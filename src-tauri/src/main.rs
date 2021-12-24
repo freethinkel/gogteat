@@ -3,9 +3,32 @@
   windows_subsystem = "windows"
 )]
 
+use tauri::Manager;
+use tauri_plugin_vibrancy::{Vibrancy, MacOSVibrancy};
+
+
+mod patch_window;
+
+#[cfg(target_os = "macos")]
+use crate::patch_window::Toolbar;
+
+
 fn main() {
-  let wry = tauri::Builder::default();
-  wry
-  .run(tauri::generate_context!())
-  .expect("error while running tauri application");
+  tauri::Builder::default()
+    .setup(|app| {
+      let window = app.get_window("main").unwrap();
+
+      #[cfg(target_os = "windows")]
+      window.apply_blur();
+
+      #[cfg(target_os = "macos")]
+      {
+        window.apply_toolbar();
+        window.apply_vibrancy(MacOSVibrancy::AppearanceBased);
+      }
+
+      Ok(())
+    })
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application");
 }

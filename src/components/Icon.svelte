@@ -7,6 +7,8 @@
 <style>
   .icon {
     font-size: 1.5rem;
-    margin-top: -2px;
+    display: flex;
+    position: relative;
+    top: -1px;
   }
 </style>
