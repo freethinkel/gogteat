@@ -96,12 +96,14 @@ export const projectsStore = {
       return state;
     });
   },
-  async readFiles() {
+  async getAllData() {
     const draft = await projectService.getDraft();
     const projects = await projectService.getProjects();
     if (draft.documents.length) {
       const docs = draft.documents.filter((doc) => !doc.isRemoved);
-      editorStore.setDocument(docs[0]);
+      if (docs.length) {
+        editorStore.setDocument(docs[0]);
+      }
     }
     store.update((state) => {
       state.projects = projects;

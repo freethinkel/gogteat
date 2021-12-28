@@ -13,12 +13,12 @@
 
   $: renameMode =
     $appStore.contextMenu.payload?.type === "rename_project" &&
-    $appStore.contextMenu.payload?.payload?.id === project.id &&
+    $appStore.contextMenu.payload?.payload?.id === project?.id &&
     !$appStore.contextMenu.payload?.payload?.isDraft;
 
   $: documents = project.documents.filter((doc) => !doc.isRemoved);
 
-  const projectContextMenuActions: ContextMenuItem[] = [
+  $: projectContextMenuActions = [
     {
       text: "Создать новый файл",
       type: "create_new_document",
@@ -31,7 +31,11 @@
       text: "Удалить",
       type: "remove_project",
     },
-  ];
+  ].filter((action) =>
+    project.isDraft
+      ? !["remove_project", "rename_project"].includes(action.type)
+      : true
+  );
 
   const toggleOpen = () => {
     isOpen = !isOpen;

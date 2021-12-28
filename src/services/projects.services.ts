@@ -83,8 +83,8 @@ export class ProjectService {
         return Promise.all(
           _projects.map(async (project) => {
             project.documents = await new DatabaseService().select(`
-        select * from project_doc where project_id = ${project.id} and is_removed = false;
-      `);
+          select * from project_doc where project_id = ${project.id} and is_removed = false;
+        `);
             return Project.fromStorage(project);
           })
         );
@@ -138,7 +138,7 @@ export class ProjectService {
 
   async removeProject(project: Project): Promise<Project> {
     await new DatabaseService().execute(
-      `UPDATE projects SET is_removed = true WHERE id = ${project.id}`
+      `UPDATE projects SET is_removed = true WHERE id = ${project.id} AND is_draft = false;`
     );
     project.isRemoved = true;
     return project;

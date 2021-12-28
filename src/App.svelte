@@ -14,9 +14,7 @@
   import { projectsStore } from "./store/projects";
 
   onMount(() => {
-    setTimeout(() => {
-      projectsStore.readFiles();
-    }, 100);
+    projectsStore.getAllData();
   });
 
   const changeCurrentDoc = (state) => {
