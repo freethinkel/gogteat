@@ -1,44 +1,88 @@
 <script lang="ts">
-  import { fs } from "@tauri-apps/api";
-
-  import type { FileItem, Project } from "../models/project";
+  import type { Project, ProjectDoc } from "../models/project";
+  import { appStore, ContextMenuItem } from "../store/app";
   import { editorStore } from "../store/editor";
-  import FileListItem from "./FileListItem.svelte";
+  import { projectsStore } from "../store/projects";
+  import Button from "./Button.svelte";
+  import DocumentItem from "./DocumentItem.svelte";
   import Icon from "./Icon.svelte";
 
   export let project: Project;
+  export let isDraft = false;
+  export let isOpen = false;
 
-  let isOpen = false;
+  let renameMode = false;
+
+  $: documents = project.documents.filter((doc) => !doc.isRemoved);
+
+  const projectContextMenuActions: ContextMenuItem[] = [
+    {
+      text: "Создать новый файл",
+      type: "create_new_document",
+    },
+    {
+      text: "Переименовать",
+      type: "rename_project",
+    },
+    {
+      text: "Удалить",
+      type: "remove_project",
+    },
+  ];
 
   const toggleOpen = () => {
     isOpen = !isOpen;
   };
 
-  const selectFile = async (file: FileItem) => {
-    const content = await fs.readTextFile(file.path);
-    editorStore.setFile(file, content);
+  const selectDocument = async (doc: ProjectDoc) => {
+    editorStore.setDocument(doc);
+  };
+
+  const onRename = (event: Event) => {
+    const newName = (event.target as HTMLInputElement).value;
+    projectsStore.renameProject(project, newName);
+    renameMode = false;
   };
 </script>
 
 <div class="wrapper" class:state_open={isOpen}>
-  <button class="project__btn" on:click={toggleOpen}>
+  <div
+    class="project__btn"
+    on:click={toggleOpen}
+    on:contextmenu|preventDefault={appStore.openContextMenu(
+      projectContextMenuActions.map((item) => ({ ...item, payload: project }))
+    )}
+  >
     <div class="arrow-icon">
       <Icon name="chevron-down" />
     </div>
     <div class="project__name">
-      {project.name}
+      {#if renameMode}
+        <input
+          autofocus
+          on:blur={onRename}
+          on:keydown={(e) => e.key === "Enter" && onRename(e)}
+          on:click|stopPropagation
+          value={project.name}
+        />
+      {:else}
+        <div class="project__name__text">
+          {project.name}
+        </div>
+      {/if}
     </div>
-    <div class="project__actions">
-      <Icon name="pencil" />
-      <Icon name="trash" />
-    </div>
-  </button>
+  </div>
   <div class="file-list">
-    {#each project.files as file}
-      <FileListItem
-        name={file.name}
-        active={$editorStore.filePath === file.path}
-        on:select={() => selectFile(file)}
+    {#if !documents?.length}
+      <div class="file-list__empty">Пустой проект</div>
+    {/if}
+    {#each documents as document}
+      <DocumentItem
+        {document}
+        active={$editorStore.document?.id === document.id}
+        renameMode={$appStore.contextMenu.payload?.type === "rename_document" &&
+          $appStore.contextMenu.payload?.payload?.id === document.id}
+        on:select={() => selectDocument(document)}
       />
     {/each}
   </div>
@@ -46,11 +90,12 @@
 
 <style lang="postcss">
   .wrapper {
+    user-select: none;
     &.state_open {
       & .file-list {
         height: auto;
       }
-      & .project-btn .arrow-icon {
+      & .project__btn .arrow-icon {
         transform: rotate(180deg);
       }
     }
@@ -59,6 +104,12 @@
     height: 0;
     overflow: hidden;
     padding-left: 12px;
+    &__empty {
+      font-size: 0.8rem;
+      padding: 12px 0;
+      color: var(--base-text-color80);
+      letter-spacing: 0.03rem;
+    }
   }
   .project {
     &__actions {
@@ -66,11 +117,29 @@
       gap: 2px;
     }
     &__name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: left;
       flex-grow: 1;
+      width: 0;
+      &__text {
+        padding: 0 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+      }
+      & input {
+        appearance: none;
+        border: none;
+        background: none;
+        padding: 0 6px;
+        margin: 0;
+        height: 23px;
+        width: 100%;
+        outline: none;
+        font-size: inherit;
+        color: inherit;
+        background: var(--base-box-color06);
+        border-radius: 4px;
+      }
     }
     &__btn {
       border: none;

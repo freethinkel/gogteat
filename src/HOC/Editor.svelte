@@ -15,10 +15,8 @@
   import { languages } from "@codemirror/language-data";
   import { oneDark } from "@codemirror/theme-one-dark";
 
-  import { editorStore } from "../store/editor";
   import { createEventDispatcher, onMount } from "svelte";
   import { appStore } from "../store/app";
-  import "../styles/theme/index.postcss";
 
   export let doc: string;
   export let theme = EditorView.theme({
@@ -51,10 +49,14 @@
   let editorEl: HTMLDivElement | undefined;
 
   $: {
-    if ($appStore.editorInstance && doc) {
+    if ($appStore.editorInstance) {
       if (doc !== $appStore.editorInstance.state.doc.toString()) {
         $appStore.editorInstance.dispatch({
-          changes: { from: 0, insert: doc },
+          changes: {
+            from: 0,
+            to: $appStore.editorInstance.state.doc.length,
+            insert: doc || "",
+          },
         });
       }
     }
@@ -99,3 +101,10 @@
 </script>
 
 <div class="gogteat__editor" bind:this={editorEl} />
+
+<style lang="postcss">
+  .gogteat__editor {
+    overflow: auto;
+    height: 100%;
+  }
+</style>

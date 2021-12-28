@@ -12,10 +12,16 @@ const config = {
   bundle: true,
   minify: true,
   outfile: "./public/build/bundle.js",
+  loader: {
+    ".sql": "text",
+  },
   plugins: [
     esbuildSvelte({
       preprocess: [
         sveltePreprocess({
+          defaults: {
+            style: "postcss",
+          },
           postcss: true,
         }),
       ],

@@ -1,11 +1,11 @@
 [package]
-name = "app"
+name = "Gogteat"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Markdown editor"
+authors = ["freethinkel"]
 license = ""
 repository = ""
-default-run = "app"
+default-run = "Gogteat"
 edition = "2018"
 build = "src/build.rs"
 
@@ -19,6 +19,7 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { git = "https://github.com/tauri-apps/tauri", branch = "next", features = ["api-all"] }
 tauri-plugin-vibrancy = { git = "https://github.com/amrbashir/tauri-plugin-vibrancy", branch = "master", version = "0.1.0"  }
+tauri-plugin-sql = { path = "./libs/tauri-plugin-sql", features = ["sqlite"] }
 log = "0.4"
 
 [target."cfg(target_os = \"macos\")".dependencies]

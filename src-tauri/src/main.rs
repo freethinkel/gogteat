@@ -3,11 +3,11 @@
   windows_subsystem = "windows"
 )]
 
+mod patch_window;
+
 use tauri::Manager;
 use tauri_plugin_vibrancy::{Vibrancy, MacOSVibrancy};
-
-
-mod patch_window;
+use tauri_plugin_sql::TauriSql;
 
 #[cfg(target_os = "macos")]
 use crate::patch_window::Toolbar;
@@ -29,6 +29,7 @@ fn main() {
 
       Ok(())
     })
+    .plugin(TauriSql::default())
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

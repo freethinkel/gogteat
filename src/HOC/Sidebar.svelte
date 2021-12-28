@@ -1,17 +1,15 @@
 <script lang="ts">
-  import { fs, dialog } from "@tauri-apps/api";
-  import { DialogFilter } from "@tauri-apps/api/dialog";
-  import FileListItem from "../components/FileListItem.svelte";
   import ProjectGroup from "../components/ProjectGroup.svelte";
-  import type { FileItem } from "../models/project";
-  import { appStore } from "../store/app";
-  import { editorStore } from "../store/editor";
   import { projectsStore } from "../store/projects";
+  $: projects = $projectsStore.projects.filter((p) => !p.isRemoved);
 </script>
 
 <div class="wrapper">
   <ul>
-    {#each $projectsStore.projects as project}
+    <li>
+      <ProjectGroup isOpen isDraft project={$projectsStore.drafts} />
+    </li>
+    {#each projects as project}
       <li>
         <ProjectGroup {project} />
       </li>
@@ -23,6 +21,7 @@
   .wrapper {
     height: 100%;
     border-right: 1px solid var(--border-color);
+    overflow: auto;
   }
   ul {
     margin: 0;

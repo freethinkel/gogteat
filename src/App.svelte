@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { identity } from "svelte/internal";
+  import AppContextMenu from "./HOC/AppContextMenu.svelte";
 
   import Editor from "./HOC/Editor.svelte";
-  import Preview from "./HOC/Preview.svelte";
+  import Preview from "./HOC/Preview/Preview.svelte";
   import Sidebar from "./HOC/Sidebar.svelte";
   import Statusbar from "./HOC/Statusbar.svelte";
   import Toolbar from "./HOC/Toolbar.svelte";
@@ -13,12 +15,14 @@
 
   onMount(() => {
     setTimeout(() => {
-      projectsStore.readProjects();
+      projectsStore.readFiles();
     }, 100);
   });
 
   const changeCurrentDoc = (state) => {
-    $editorStore.content = state.doc.toString();
+    if ($editorStore.document) {
+      $editorStore.document.content = state.doc.toString();
+    }
   };
 </script>
 
@@ -31,18 +35,29 @@
     <div class="content">
       {#if $appStore.previewMode}
         <Preview />
-      {:else}
+      {/if}
+      <div
+        class="editor__wrapper"
+        hidden={$appStore.previewMode || !$editorStore.document}
+      >
         <Editor
-          doc={$editorStore.content}
+          doc={$editorStore.document?.content}
           on:change={(e) => changeCurrentDoc(e.detail)}
         />
-      {/if}
+      </div>
     </div>
   </main>
-  <Statusbar />
+  {#if $editorStore.document}
+    <Statusbar />
+  {/if}
 </div>
 
+<AppContextMenu />
+
 <style lang="postcss">
+  .editor__wrapper {
+    height: 100%;
+  }
   .app {
     height: 100%;
     display: flex;

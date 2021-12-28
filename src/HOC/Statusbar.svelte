@@ -1,8 +1,10 @@
 <script lang="ts">
   import { editorStore } from "../store/editor";
 
-  $: wordCount = $editorStore.content.split(" ").filter((word) => word).length;
-  $: lineCount = $editorStore.content.split("\n").length;
+  $: wordCount =
+    $editorStore.document?.content.split(" ").filter((word) => word).length ||
+    0;
+  $: lineCount = $editorStore.document?.content?.split("\n")?.length || 0;
 </script>
 
 <div class="wrapper">

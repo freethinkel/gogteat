@@ -18,16 +18,25 @@
   });
 
   const togglePreview = () => {
-    $appStore.previewMode = !$appStore.previewMode;
+    appStore.togglePreview();
   };
 
-  const openFilePicker = () => {};
+  const openFilePicker = () => {
+    projectsStore.pickFile();
+  };
+
+  const createProject = () => {
+    projectsStore.createProject();
+  };
 </script>
 
 <div class="wrapper" data-tauri-drag-region={isMacos} class:macos={isMacos}>
   <div class="left_side">
     <Button on:click={openFilePicker}>
       <Icon name="file" />
+    </Button>
+    <Button on:click={createProject}>
+      <Icon name="plus" />
     </Button>
   </div>
   <div class="right_side">
@@ -40,7 +49,7 @@
   </div>
 </div>
 
-<style lang="postcss">
+<style>
   .wrapper {
     border-bottom: 1px solid var(--border-color);
     background: rgba(0, 0, 0, 0.05);

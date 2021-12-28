@@ -6,7 +6,7 @@
   const dispatch = createEventDispatcher();
 </script>
 
-<button class:active class="btn" on:click={() => dispatch("click")}>
+<button class:active class="btn" on:click={(e) => dispatch("click", e)}>
   <slot />
 </button>
 

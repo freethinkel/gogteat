@@ -1,26 +1,24 @@
 import { fs } from "@tauri-apps/api";
 import { writable } from "svelte/store";
 import { debounceTime } from "../helpers";
-import type { FileItem } from "../models/project";
+import type { Project, ProjectDoc } from "../models/project";
+import { projectsStore } from "./projects";
 
 const DEFAULT = {
-  fileName: null as string | null,
-  filePath: null as string | null,
-  content: "",
+  document: null as ProjectDoc | null,
 };
 
 const store = writable(DEFAULT);
 
-const updateFile = (path: string, content: string) => {
-  console.log("update file", content.length);
-  fs.writeFile({ path, contents: content });
+const updateDocument = (document: ProjectDoc) => {
+  projectsStore.updateDocumentContent(document);
 };
 
-const debounceUpdateFile = debounceTime(300, updateFile);
+const debounceUpdateDocument = debounceTime(300, updateDocument);
 
 store.subscribe((state) => {
-  if (state.filePath) {
-    debounceUpdateFile(state.filePath, state.content);
+  if (state.document) {
+    debounceUpdateDocument(state.document);
   }
 });
 
@@ -29,16 +27,13 @@ export const editorStore = {
   subscribe: store.subscribe,
   updateContent(content) {
     store.update((state) => {
-      state.content = content;
+      state.document.content = content;
       return state;
     });
   },
-  setFile(file: FileItem, content: string) {
+  setDocument(document: ProjectDoc) {
     store.update((state) => {
-      state.content = content;
-      state.fileName = file.name;
-      state.filePath = file.path;
-
+      state.document = document;
       return state;
     });
   },
