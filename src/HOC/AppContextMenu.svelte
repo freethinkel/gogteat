@@ -35,8 +35,6 @@
   };
 </script>
 
-<!-- {JSON.stringify($appStore.contextMenu)} -->
-
 <div class="wrapper" bind:this={menuEl}>
   {#if $appStore.contextMenu.isOpen && $appStore.contextMenu.items?.length}
     <ContextMenu

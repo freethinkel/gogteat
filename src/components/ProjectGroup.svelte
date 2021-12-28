@@ -11,7 +11,10 @@
   export let isDraft = false;
   export let isOpen = false;
 
-  let renameMode = false;
+  $: renameMode =
+    $appStore.contextMenu.payload?.type === "rename_project" &&
+    $appStore.contextMenu.payload?.payload?.id === project.id &&
+    !$appStore.contextMenu.payload?.payload?.isDraft;
 
   $: documents = project.documents.filter((doc) => !doc.isRemoved);
 
@@ -41,7 +44,7 @@
   const onRename = (event: Event) => {
     const newName = (event.target as HTMLInputElement).value;
     projectsStore.renameProject(project, newName);
-    renameMode = false;
+    $appStore.contextMenu.payload = null;
   };
 </script>
 

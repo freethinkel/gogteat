@@ -21,7 +21,7 @@
   export let doc: string;
   export let theme = EditorView.theme({
     "&": {
-      backgroundColor: "transparent !important",
+      // backgroundColor: "transparent !important",
       height: "100%",
     },
   });

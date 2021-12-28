@@ -43,9 +43,9 @@
     <Button active={$appStore.previewMode} on:click={togglePreview}>
       <Icon name="presentation" />
     </Button>
-    <Button>
+    <!-- <Button>
       <Icon name="artboard" />
-    </Button>
+    </Button> -->
   </div>
 </div>
 
