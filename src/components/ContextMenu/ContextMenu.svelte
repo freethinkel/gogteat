@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { fade, fly } from "svelte/transition";
-  import type { ContextMenuItem } from "../store/app";
+  import type { ContextMenuItem } from "./types";
 
   export let items: ContextMenuItem[] = [];
 
@@ -14,7 +13,7 @@
 <div
   class="wrapper"
   style={`left: ${x}px; top: ${y}px;`}
-  transition:fade={{ duration: 100 }}
+  class:hidden={!items.length}
 >
   <ul>
     {#each items as item}
@@ -27,7 +26,7 @@
   </ul>
 </div>
 
-<style lang="postcss">
+<style>
   .wrapper {
     user-select: none;
     position: fixed;
@@ -36,7 +35,11 @@
     border-radius: 8px;
     min-width: 100px;
     border: 1px solid var(--base-box-color12);
-    transition: 0.1s;
+
+    &.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
   }
   ul {
     margin: 0;

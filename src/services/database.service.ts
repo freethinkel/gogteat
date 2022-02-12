@@ -1,4 +1,4 @@
-import { path } from "@tauri-apps/api";
+import { fs, path } from "@tauri-apps/api";
 import Database, { QueryResult } from "tauri-plugin-sql-api";
 import seed from "./seed.sql";
 
@@ -9,6 +9,10 @@ let instance: DatabaseService | undefined;
 export class DatabaseService {
   db = Promise.resolve()
     .then(() => path.appDir())
+    .then(async (appDir) => {
+      await fs.createDir(appDir).catch((err) => {});
+      return appDir;
+    })
     .then((appDir) => `sqlite:${appDir}${DB_FILE}`)
     .then((path) => Database.load(path));
 

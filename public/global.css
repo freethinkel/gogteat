@@ -25,6 +25,7 @@
     --background-color: transparent;
     --border-color: rgba(170, 170, 170, 0.06);
 
+    --base-box-color: rgba(240, 240, 240, 1);
     --base-box-color80: rgba(240, 240, 240, 0.8);
     --base-box-color50: rgba(240, 240, 240, 0.5);
     --base-box-color20: rgba(240, 240, 240, 0.2);

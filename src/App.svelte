@@ -1,7 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { identity } from "svelte/internal";
-  import AppContextMenu from "./HOC/AppContextMenu.svelte";
 
   import Editor from "./HOC/Editor.svelte";
   import Preview from "./HOC/Preview/Preview.svelte";
@@ -49,8 +47,6 @@
     <Statusbar />
   {/if}
 </div>
-
-<AppContextMenu />
 
 <style lang="postcss">
   .editor__wrapper {

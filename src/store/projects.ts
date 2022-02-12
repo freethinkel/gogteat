@@ -1,8 +1,11 @@
-import { dialog, fs, path } from "@tauri-apps/api";
-import { get, writable } from "svelte/store";
+import { writable } from "svelte/store";
+import {
+  SET_RENAME_DOCUMENT_ACTION,
+  SET_RENAME_PROJECT_ACTION,
+} from "../constants";
 import type { Project, ProjectDoc } from "../models/project";
 import { ProjectService } from "../services/projects.services";
-import { StorageService } from "../services/storage.service";
+import { appStore } from "./app";
 import { editorStore } from "./editor";
 
 const DEFAULT = {
@@ -58,6 +61,11 @@ export const projectsStore = {
       _project.documents.push(doc);
       return state;
     });
+
+    setTimeout(() => {
+      appStore.channel.on("ASD", (data) => {});
+      appStore.channel.emit("ASD", doc);
+    }, 100);
   },
   async createProject() {
     const project = await projectService.createNewProject();
@@ -65,6 +73,9 @@ export const projectsStore = {
       state.projects.push(project);
       return state;
     });
+    setTimeout(() => {
+      appStore.channel.emit(SET_RENAME_PROJECT_ACTION, project);
+    }, 100);
   },
   async renameDocument(document: ProjectDoc, name: string) {
     const doc = await projectService.renameDocument(document, name);

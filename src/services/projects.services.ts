@@ -5,8 +5,6 @@ import { DatabaseService } from "./database.service";
 let instance: ProjectService | undefined;
 
 export class ProjectService {
-  private _appDir = "";
-
   constructor() {
     if (instance) {
       return instance;
@@ -17,13 +15,12 @@ export class ProjectService {
     this._init();
   }
 
-  private async _init() {
-    this._appDir = await path.appDir();
-  }
+  private async _init() {}
 
   async updateDocumentContent(doc: ProjectDoc) {
     await new DatabaseService().execute(
-      `UPDATE project_doc SET content = '${doc.content}' WHERE id = ${doc.id}`
+      `UPDATE project_doc SET content = $1 WHERE id = $2`,
+      [doc.content, doc.id]
     );
     return doc;
   }
@@ -52,12 +49,14 @@ export class ProjectService {
       `SELECT * FROM projects WHERE is_draft = true;`
     );
     const draft = Project.fromStorage(draftRaw);
-    const res = await new DatabaseService().execute(`
-      INSERT INTO project_doc (name, content, project_id)
-      VALUES ('${fileName}', '${fileContent}', ${draft.id});
-    `);
+    const res = await new DatabaseService().execute(
+      `INSERT INTO project_doc (name, content, project_id)
+      VALUES ($1, $2, $3);`,
+      [fileName, fileContent, draft.id]
+    );
     const [docRaw] = await new DatabaseService().select(
-      `SELECT * FROM project_doc WHERE id = ${res.lastInsertId}`
+      `SELECT * FROM project_doc WHERE id = $1`,
+      [res.lastInsertId]
     );
     const doc = ProjectDoc.fromStorage(docRaw);
     return doc;
@@ -67,9 +66,12 @@ export class ProjectService {
     const [draft] = await new DatabaseService().select(
       `select * from projects where is_draft = true and is_removed = false;`
     );
-    draft.documents = await new DatabaseService().select(`
-      select * from project_doc where project_id = ${draft.id} and is_removed = false
-    `);
+    draft.documents = await new DatabaseService().select(
+      `
+      select * from project_doc where project_id = $1 and is_removed = false
+    `,
+      [draft.id]
+    );
 
     return Project.fromStorage(draft);
   }
@@ -112,10 +114,13 @@ export class ProjectService {
   }
 
   async createDocument(project: Project): Promise<ProjectDoc> {
-    const res = await new DatabaseService().execute(`
+    const res = await new DatabaseService().execute(
+      `
       INSERT INTO project_doc (name, content, project_id)
-      VALUES ('UNNAMED', '', ${project.id});
-    `);
+      VALUES ($1, $2, $3);
+    `,
+      ["UNNAMED", "", project.id]
+    );
     const [doc] = await new DatabaseService().select(
       `select * from project_doc where id = ${res.lastInsertId}`
     );

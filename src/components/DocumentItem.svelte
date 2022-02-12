@@ -1,9 +1,12 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { SET_RENAME_DOCUMENT_ACTION } from "../constants";
   import type { ProjectDoc } from "../models/project";
-  import { appStore, ContextMenuItem } from "../store/app";
-  import { editorStore } from "../store/editor";
+  import { appStore } from "../store/app";
+  import Dragabble from "./Draggable.svelte";
   import { projectsStore } from "../store/projects";
+  import { useContextMenu } from "./ContextMenu";
+  import type { ContextMenuItem } from "./ContextMenu/types";
   import Icon from "./Icon.svelte";
 
   const fileActions: ContextMenuItem[] = [
@@ -19,19 +22,9 @@
 
   export let document: ProjectDoc;
   export let active = false;
-  export let renameMode = false;
+  let renameMode = false;
 
   let inputEl: HTMLInputElement | undefined;
-
-  $: {
-    if (renameMode) {
-      setTimeout(() => {
-        const name = inputEl.value.split(".").slice(0, -1).join(".");
-        const pos = name.length === 0 ? inputEl.value.length : name.length;
-        inputEl.setSelectionRange(pos, pos);
-      });
-    }
-  }
 
   const dispatch = createEventDispatcher();
 
@@ -40,50 +33,70 @@
     if (newName !== document.name) {
       projectsStore.renameDocument(document, newName);
     }
-    appStore.closeContextMenu(null);
   };
+
+  const setRename = () => {
+    renameMode = true;
+    setTimeout(() => {
+      const name = inputEl.value.split(".").slice(0, -1).join(".");
+      const pos = name.length === 0 ? inputEl.value.length : name.length;
+      inputEl.focus();
+      inputEl.setSelectionRange(0, pos);
+    });
+  };
+
+  const onSelectContextAction = (type: string) => {
+    const handler = {
+      rename_document: setRename,
+      remove_document: () => {
+        projectsStore.removeDocument(document);
+      },
+    }[type];
+    handler && handler();
+  };
+
+  onMount(() => {
+    appStore.channel.on(SET_RENAME_DOCUMENT_ACTION, (doc: ProjectDoc) => {
+      if (doc.id === document.id) {
+        setRename();
+      }
+    });
+  });
 </script>
 
-<button
-  class:active
-  class="wrapper"
-  on:click={() => dispatch("select")}
-  on:contextmenu|preventDefault={appStore.openContextMenu(
-    fileActions.map((item) => ({ ...item, payload: document }))
-  )}
->
-  <div class="icon">
-    <Icon name="markdown" />
-  </div>
-  <div class="content">
-    <div class="name">
-      {#if renameMode}
-        <input
-          autofocus
-          type="text"
-          value={document.name}
-          bind:this={inputEl}
-          on:blur={onRename}
-          on:keydown={(e) => e.key === "Enter" && onRename(e)}
-        />
-      {:else}
-        {document.name}
-      {/if}
+<Dragabble type="document" payload={document.id}>
+  <button
+    class:active
+    class="wrapper"
+    on:click={() => dispatch("select")}
+    on:contextmenu|preventDefault|stopPropagation={useContextMenu(fileActions)(
+      onSelectContextAction
+    )}
+  >
+    <div class="icon">
+      <Icon name="markdown" />
     </div>
-    {#if active}
-      <div class="path">
-        {$editorStore.document?.content?.split("\n")?.[0]}
+    <div class="content">
+      <div class="name">
+        {#if renameMode}
+          <input
+            type="text"
+            value={document.name}
+            bind:this={inputEl}
+            on:blur={onRename}
+            on:keydown={(e) => e.key === "Enter" && onRename(e)}
+          />
+        {:else}
+          {document.name}
+        {/if}
       </div>
-    {/if}
-  </div>
-</button>
+    </div>
+  </button>
+</Dragabble>
 
 <style lang="postcss">
   .wrapper {
-    --active-item-color: rgba(0, 0, 0, 0.06);
-    @media (prefers-color-scheme: dark) {
-      --active-item-color: rgba(255, 255, 255, 0.06);
-    }
+    --active-item-color: var(--base-box-color12);
     user-select: none;
     border: none;
     background: none;
@@ -96,12 +109,15 @@
     text-align: left;
     gap: 4px;
     align-items: center;
-    height: 42px;
     font-size: 1rem;
     color: var(--base-text-color);
-    border-bottom: 1px solid var(--border-color);
+    /* border-bottom: 1px solid var(--border-color); */
+    border-radius: 4px;
     &.active {
       background-color: var(--active-item-color);
+    }
+    & .icon {
+      color: var(--accent-color);
     }
   }
   .content {
@@ -112,8 +128,11 @@
   }
   .name {
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 400;
     color: var(--base-text-color);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     & input {
       width: 100%;
       background: none;
