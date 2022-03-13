@@ -1,31 +1,35 @@
 [package]
-name = "Gogteat"
+name = "gogteat"
 version = "0.1.0"
 description = "Markdown editor"
 authors = ["freethinkel"]
 license = ""
 repository = ""
-default-run = "Gogteat"
+default-run = "gogteat"
 edition = "2018"
 build = "src/build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.0.0-beta.4" }
+tauri-build = { version = "1.0.0-beta.4", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { git = "https://github.com/tauri-apps/tauri", branch = "next", features = ["api-all"] }
-tauri-plugin-vibrancy = { git = "https://github.com/amrbashir/tauri-plugin-vibrancy", branch = "master", version = "0.1.0"  }
-tauri-plugin-sql = { path = "./libs/tauri-plugin-sql", features = ["sqlite"] }
+tauri = { version = "1.0.0-rc.3", features = ["api-all", "macos-private-api"] }
+window-vibrancy = { git = "https://github.com/tauri-apps/window-vibrancy", version = "0.1.0" }
 log = "0.4"
+
+[dependencies.tauri-plugin-sql]
+git = "https://github.com/tauri-apps/tauri-plugin-sql"
+branch = "release"
+features = ["sqlite"]                                  # or "postgres", or "mysql"
 
 [target."cfg(target_os = \"macos\")".dependencies]
 cocoa = "0.24"
 objc = "0.2"
 
 [features]
-default = [ "custom-protocol" ]
-custom-protocol = [ "tauri/custom-protocol" ]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

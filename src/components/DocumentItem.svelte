@@ -111,7 +111,7 @@
     align-items: center;
     font-size: 1rem;
     color: var(--base-text-color);
-    /* border-bottom: 1px solid var(--border-color); */
+    transition: var(--transition);
     border-radius: 4px;
     &.active {
       background-color: var(--active-item-color);

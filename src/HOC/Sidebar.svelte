@@ -17,7 +17,7 @@
   </ul>
 </div>
 
-<style>
+<style lang="postcss">
   .wrapper {
     height: 100%;
     border-right: 1px solid var(--border-color);

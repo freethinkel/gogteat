@@ -2,9 +2,9 @@
 
 use cocoa::{
     appkit::{
-        NSWindow, NSToolbar, NSWindowTitleVisibility, NSWindowStyleMask
+        NSWindow, NSToolbar, NSWindowTitleVisibility, NSWindowStyleMask, NSColor
     },
-    base::{id, nil},
+    base::{id, nil, BOOL},
 };
 
 #[allow(deprecated)]

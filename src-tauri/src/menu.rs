@@ -1,4 +1,4 @@
-use tauri::{Menu, MenuItem, Submenu};
+use tauri::{Menu, MenuItem, Submenu, CustomMenuItem};
 
 pub trait AddDefaultSubmenus {
   fn add_default_app_submenu_if_macos(self, app_name: &str) -> Self;
@@ -29,13 +29,17 @@ impl AddDefaultSubmenus for Menu {
   }
   fn add_default_file_submenu(self) -> Menu {
     self.add_submenu(Submenu::new(
-      "File",
-      Menu::new().add_native_item(MenuItem::CloseWindow),
+      "Файл",
+      Menu::new()
+      .add_item(CustomMenuItem::new("create_new_file", "Создать новый файл"))
+      .add_item(CustomMenuItem::new("open", "Открыть"))
+      .add_native_item(MenuItem::Separator)
+      .add_native_item(MenuItem::CloseWindow),
     ))
   }
 
   fn add_default_edit_submenu(self) -> Menu {
-    self.add_submenu(Submenu::new("Edit", {
+    self.add_submenu(Submenu::new("Правка", {
       let mut menu = Menu::new()
         .add_native_item(MenuItem::Undo)
         .add_native_item(MenuItem::Redo)
@@ -48,22 +52,20 @@ impl AddDefaultSubmenus for Menu {
         menu = menu.add_native_item(MenuItem::Separator);
       }
       menu = menu.add_native_item(MenuItem::SelectAll);
-      // macOS automatically adds "Start Dictation" and "Emoji & Symbols" to
-      // the bottom of the Edit menu
       menu
     }))
   }
 
   fn add_default_view_submenu(self) -> Menu {
     self.add_submenu(Submenu::new(
-      "View",
+      "Вид",
       Menu::new().add_native_item(MenuItem::EnterFullScreen),
     ))
   }
 
   fn add_default_window_submenu(self) -> Menu {
     self.add_submenu(Submenu::new(
-      "Window",
+      "Окно",
       Menu::new()
         .add_native_item(MenuItem::Minimize)
         .add_native_item(MenuItem::Zoom),

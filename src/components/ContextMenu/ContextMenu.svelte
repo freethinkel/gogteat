@@ -35,6 +35,7 @@
     border-radius: 8px;
     min-width: 100px;
     border: 1px solid var(--base-box-color12);
+    transition: var(--transition);
 
     &.hidden {
       opacity: 0;

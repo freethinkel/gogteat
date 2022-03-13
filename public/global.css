@@ -18,6 +18,8 @@
 
   --selection-color: var(--accent-color30);
   --background-color: transparent;
+
+  --transition: 0.1s ease-in-out;
 }
 
 @media (prefers-color-scheme: dark) {

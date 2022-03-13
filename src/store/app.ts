@@ -1,5 +1,7 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
+import { editorStore } from "./editor";
 import { EventEmitter } from "./EventEmitter";
+import { projectsStore } from "./projects";
 
 export type AppAction = string;
 
@@ -24,6 +26,29 @@ export const appStore = {
       state.editorInstance = instance;
       return state;
     });
+  },
+  async onSelectMenu(payload: string) {
+    const handler = {
+      open: () => projectsStore.pickFile(),
+      create_new_file: () => {
+        const currentProjectId = get(editorStore).document.projectId;
+        if (currentProjectId) {
+          const drafts = get(projectsStore).drafts;
+          if (drafts.id === currentProjectId) {
+            projectsStore.createDocument(drafts);
+          } else {
+            const project = get(projectsStore).projects.find(
+              (p) => p.id === currentProjectId
+            );
+            projectsStore.createDocument(project);
+          }
+        }
+      },
+    }[payload];
+
+    if (handler) {
+      handler();
+    }
   },
   channel: new EventEmitter(),
 };

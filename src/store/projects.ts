@@ -62,10 +62,7 @@ export const projectsStore = {
       return state;
     });
 
-    setTimeout(() => {
-      appStore.channel.on("ASD", (data) => {});
-      appStore.channel.emit("ASD", doc);
-    }, 100);
+    editorStore.setDocument(doc);
   },
   async createProject() {
     const project = await projectService.createNewProject();

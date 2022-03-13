@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { listen } from "@tauri-apps/api/event";
+
   import { onMount } from "svelte";
 
   import Editor from "./HOC/Editor.svelte";
@@ -13,6 +15,10 @@
 
   onMount(() => {
     projectsStore.getAllData();
+
+    listen("on_menu_select", (event) => {
+      appStore.onSelectMenu(event.payload as string);
+    });
   });
 
   const changeCurrentDoc = (state) => {

@@ -21,10 +21,6 @@
     appStore.togglePreview();
   };
 
-  const openFilePicker = () => {
-    projectsStore.pickFile();
-  };
-
   const createProject = () => {
     projectsStore.createProject();
   };
@@ -32,9 +28,6 @@
 
 <div class="wrapper" data-tauri-drag-region={isMacos} class:macos={isMacos}>
   <div class="left_side">
-    <Button on:click={openFilePicker}>
-      <Icon name="file" />
-    </Button>
     <Button on:click={createProject}>
       <Icon name="plus" />
     </Button>

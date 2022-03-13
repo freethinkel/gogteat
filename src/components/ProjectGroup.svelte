@@ -16,6 +16,7 @@
 
   let renameMode = false;
   let inputEl: HTMLInputElement | undefined;
+  let fileListRef: HTMLDivElement;
 
   $: documents = project.documents.filter((doc) => !doc.isRemoved);
 
@@ -76,6 +77,29 @@
       }
     });
   });
+
+  const updateHeight = () => {
+    if (fileListRef) {
+      if (isOpen) {
+        const prevHeight = fileListRef.clientHeight;
+        fileListRef.style.height = "auto";
+        const height = fileListRef.clientHeight;
+        fileListRef.style.height = `${prevHeight}px`;
+        setTimeout(() => {
+          fileListRef.style.height = `${height}px`;
+        });
+      } else {
+        fileListRef.style.height = "0px";
+      }
+    }
+  };
+
+  $: {
+    [isOpen, documents];
+    setTimeout(() => {
+      updateHeight();
+    });
+  }
 </script>
 
 <div class="wrapper" class:state_open={isOpen}>
@@ -105,7 +129,7 @@
       <Icon name="chevron-down" />
     </div>
   </div>
-  <div class="file-list">
+  <div class="file-list" bind:this={fileListRef}>
     {#if !documents?.length}
       <div class="file-list__empty">Пустой проект</div>
     {/if}
@@ -127,9 +151,6 @@
       transition: 0.1s;
     }
     &.state_open {
-      & .file-list {
-        height: auto;
-      }
       & .project__btn .arrow-icon {
         transform: rotate(0deg);
       }
@@ -139,6 +160,7 @@
     height: 0;
     overflow: hidden;
     padding: 0 12px;
+    transition: var(--transition);
     &__empty {
       font-size: 0.8rem;
       padding: 12px 0;
